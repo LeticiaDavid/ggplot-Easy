@@ -1,0 +1,327 @@
+---
+title: "GGplot"
+output:output: html_document
+---
+
+Pacotes de paletas de cores
+```{r}
+library(RColorBrewer)
+library(Pals)
+library(Wesanderson) # paleta de cores de filmes do Wes Anderson
+library(ggsci) #paleta de cores de jornais cientificos e temas sci-fi
+library(harrypotter) #paleta de cores baseada nos filmes do Harry Potter
+```
+
+
+```{r}
+library(data.table)
+dados = data.table(read_excel("C:/Users/Leticia/Documents/Faculdade/2020_2/Aplicada/Trabalhos/Trabalho_1/DADOS7.xls",sheet = 1))
+```
+
+```{r}
+# GRÁFICOS ----------------------------------------------------------------
+
+dados[,Tabagismo:=as.factor(Tabagismo)]
+dados[,Lesoes:=as.factor(Lesoes)]
+```
+
+
+```{r}
+# Genero x lesoes
+dados %>% 
+  count(Lesoes,Genero) %>%
+  ggplot(aes(x=Lesoes,y=n,fill=Genero))+
+  geom_bar(stat="identity", position=position_dodge())+
+  geom_text(aes(label=n), vjust=1.6, color="white",
+            position = position_dodge(0.9), size=3.5)+
+  scale_fill_brewer(palette="Paired")+
+  labs(title = "Lesões x Gênero",x="Número de Lesões",
+       y="Números Absolutos",fill="Gênero")+
+  theme_light()+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+```{r}
+# Tabagismo x lesoes
+dados %>% 
+  count(Lesoes,Tabagismo) %>%
+  ggplot(aes(x=Lesoes,y=n,fill=Tabagismo))+
+  geom_bar(stat="identity", position=position_dodge())+
+  geom_text(aes(label=n), vjust=1.6, color="white",
+            position = position_dodge(0.9), size=3.5)+
+  scale_fill_brewer(palette="Paired")+
+  labs(title = "Lesões x Tabagismo",x="Número de Lesões",
+       y="Números Absolutos",fill="Tabagismo")+
+  theme_light()+
+  theme(plot.title = element_text(hjust = 0.5))
+
+```
+
+
+```{r}
+# Genero x tabagismo
+dados %>% 
+  count(Tabagismo,Genero) %>%
+  ggplot(aes(x=Genero,y=n,fill=Tabagismo))+
+  geom_bar(stat="identity", position=position_dodge())+
+  geom_text(aes(label=n), vjust=1.6, color="white",
+            position = position_dodge(0.9), size=3.5)+
+  scale_fill_brewer(palette="Paired")+
+  labs(title = "Gênero x Tabagismo",x="Gênero",
+       y="Números Absolutos",fill="Tabagismo")+
+  theme_light()+
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+
+```{r}
+# genero
+dados %>% 
+  count(Genero) %>%
+  ggplot(aes(x='',y=n,fill=Genero))+
+  geom_bar(stat="identity", width = 1)+
+  theme(axis.text.x=element_blank())+
+  geom_text(aes(label = percent(n/361)), size=5, color="white",
+            position = position_stack(vjust = .5))+
+  coord_polar("y",start=0)+
+  theme_void()+scale_fill_brewer(palette="Paired")
+```
+
+
+```{r}
+# tabagismo
+dados %>% 
+  count(Tabagismo) %>%
+  ggplot(aes(x='',y=n,fill=Tabagismo))+
+  geom_bar(stat="identity", width = 1)+
+  theme(axis.text.x=element_blank())+
+  geom_text(aes(label = percent(n/361)), size=5, color="white",
+            position = position_stack(vjust = .5))+
+  coord_polar("y",start=0)+
+  theme_void()+scale_fill_brewer(palette="Paired")
+```
+
+
+```{r}
+# lesoes
+dados %>% 
+  count(Lesoes) %>%
+  ggplot(aes(x=Lesoes,y=n))+
+  geom_bar(stat="identity", position=position_dodge(), fill = "steelblue")+
+  geom_text(aes(label=n), vjust=1.6, color="white",
+            position = position_dodge(0.9), size=3.5)+
+  labs(title = "Quantidade de Lesões",x="Número de Lesões",y="Números Absolutos" )+
+  theme_light()+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.title = element_blank())
+```
+
+
+```{r}
+# idade
+ggplot(dados)+
+  geom_boxplot(aes(x=as.factor(Lesoes), y=Idade), fill = "steelblue")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  labs(title ="Boxplot das Quantidades de Lesões por Idade", y = "Idade", 
+       x = "Número de Lesões")+
+  theme_light()+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.title = element_blank())
+
+l1=dados %>% filter(Lesoes==1)
+summary(l1$Idade)
+
+l2=dados %>% filter(Lesoes==2)
+summary(l2$Idade)
+
+l3=dados %>% filter(Lesoes==3)
+summary(l3$Idade)
+```
+
+
+```{r}
+# lesoes x idade
+ggplot(dados)+
+  geom_boxplot(aes(x="", y=Idade), fill = "steelblue")+
+  theme(plot.title = element_text(hjust = 0.5))+
+  labs(title ="Boxplot da Idade", y = "Idade", 
+       x = "")+
+  theme_light()+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(legend.title = element_blank())
+
+```
+
+
+
+
+```{r}
+#Exemplo Gráfico de Pizza
+d1 <- data.frame (V = c("A", "B", "C", "D", "E",  "F", "G", "H"),
+                  O = c(9,2.5,7,8,7,6,7,7.5),
+                  S = c(6,5,3,5,3,4,5,6))
+
+d2 <- data.frame (V = c("A", "B", "C", "D"),
+                  O = c(10,3,7.5,8.2),
+                  S = c(6,5,3,5))
+
+scaleFUN <- function(x) sprintf("%.0f", x)
+p<-ggplot(data=d1, aes(x=S, y=O), group=factor(V), shape=V) +
+  geom_point(size = 5, aes(fill=V),pch=21, alpha = 0.35)+
+  theme_bw()+
+  geom_point(data = d2, size=5, aes(fill=V), pch=22,colour="black")+
+  theme(legend.title=element_blank())+
+  xlab(expression(italic("S"))) + theme(text = element_text(size=25))+
+  ylab(expression(italic("O")))+ theme(text = element_text(size=25))+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())+
+  theme(axis.text.y=element_text(angle=90, hjust=1))+
+  theme(legend.position="none") # remove legend
+
+print(p)
+
+
+
+ggplot(data = d1, aes(x = S, y = O), group = factor(V), shape = V) +
+  geom_point(size = 5, aes(fill = V), pch = 21, alpha = 0.35) +
+  geom_point(data = d2, size = 5, aes(fill = V), pch = 22, colour = "black") +
+  geom_segment(data = merge(d1, d2, by = "V"),
+               aes(x = S.x, xend = S.y, y = O.x, yend = O.y)) +
+  guides(fill = FALSE)
+```
+
+
+
+
+Alterando legendas e titulos
+```{r}
+ggplot(data=dados)+
+  labs(title = "Insira aqui o título",
+       subtitle = "insira aqui o subtítulo",
+       y="Insira aqui o título das abscissas",
+       x="Insira aqui o título das ordenadas",
+       caption = "Insira aqui o título do rodapé",
+       color="Insira aqui o título da distinção de cores",
+       size="Insira aqui o título da distinção de tamanho")+
+  theme(plot.title = element_text(hjust = 0.5))+ #CENTRALIZANDO O TÍTULO
+  theme(legend.position=c(0.1, 0.1))+ #POSIÇÃO DA LEGENDA EM X E Y
+  theme(legend.position="none") #REMOVE A LEGENDA
+```
+
+```{r}
+#Exemplo
+library(gapminder)
+library(dplyr)
+library(ggplot2)
+gapminder_2007=filter(.data=gapminder,year==2007)
+ggplot(data=gapminder_2007,aes(x=gdpPercap,y=lifeExp,color=continent,size=pop)) + 
+  labs(title="PIB e Expectativa de Vida em 2007", subtitle="", 
+       y="Expectativa de Vida",x="PIB Per capita", caption="teste",
+       color = "Continente",
+       size = "População") +
+  geom_point() + 
+  scale_x_log10()
+```
+
+```{r}
+
+#Remoção de eixos, riscos e esse tipo de coisa
+dat <- data.frame(x=runif(10),y=runif(10))
+
+p <- ggplot(dat, aes(x=x, y=y)) + 
+        geom_point() +
+        scale_x_continuous(expand=c(0,0)) + 
+        scale_y_continuous(expand=c(0,0))   
+
+p + theme(axis.line=element_blank(),axis.text.x=element_blank(),
+          axis.text.y=element_blank(),axis.ticks=element_blank(),
+          axis.title.x=element_blank(),
+          axis.title.y=element_blank(),legend.position="none",
+          panel.background=element_blank(),panel.border=element_blank(),panel.grid.major=element_blank(),
+          panel.grid.minor=element_blank(),plot.background=element_blank())
+```
+
+
+```{r}
+#Para a junção de mais de um gráfico é necessário a utilização do pacote gridExtra
+library(gridExtra)
+grafico_1=ggplot(data=data)+
+  geom_formato(mapping=aes)
+grafico_2=ggplot(data=data)+
+  geom_formato(mapping=aes)
+
+grid.arrange(grafico_1,grafico_2)
+
+```
+
+Mudando limites dos eixos das abscissas e ordenadas
+```{r}
+ggplot(data=dados)+
+  scale_x_continuous(breaks=c(seq(1,2,0.05)))+ #VALORES DE INÍCIO AO FIM DO LIMITE, PODEM SER UTILIZADOS OUTROS TIPOS DE VARIÁVEIS COMO DISCRETO OU DATA scale_x_tipodavriável
+  scale_y_continuous(breaks=c(seq(1,2,0.05))) #VALORES DE INÍCIO AO FIM DO LIMITE, PODEM SER UTILIZADOS OUTROS TIPOS DE VARIÁVEIS COMO DISCRETO OU DATA scale_y_tipodavriável
+```
+
+
+```{r}
+# Exemplo
+set.seed(123)
+PAbr <- data.frame(
+  Data = seq(as.Date("2018-01-01"), by = "1 month", length.out = 18),
+  Produção = rnorm(18, 10^9, 10^8) )
+
+library(ggplot2)
+
+ggplot(PAbr, aes(Data, Produção/10^9)) +
+  geom_line(size = 1) + 
+  scale_x_date(NULL, date_labels = "%b/%y", date_breaks = "1 month") +
+  scale_y_continuous("Produção (em milhões de toneladas)") +
+  theme_minimal()
+```
+
+
+
+```{r}
+#Exemplo de costumização de legendas
+lines = 'Mes    Lg1 total1  Lg2 total2
+        Jan base1   1450    base2   89
+        Fev base1   1700    base2   86
+        Mar base1   1500    base2   87
+        Abr base1   1850    base2   61
+        Mai base1   1490    base2   80
+        Jun base1   1500    base2   87
+        Jul base1   1600    base2   82
+        Ago base1   1750    base2   64
+        Set base1   1800    base2   86
+        Out base1   1450    base2   73
+        Nov base1   1600    base2   61
+        Dez base1   1400    base2   92'
+
+# import data
+dados <-read.table(textConnection(lines),h=T) 
+
+# show first dadoservations
+head(dados)
+levels(dados$Mes)
+dados$Mes = factor(dados$Mes, levels=c("Jan", "Fev", "Mar", "Abr", "Mai", "Jun", 
+                                   "Jul", "Ago", "Set", "Out", "Nov", "Dez"))
+library(reshape)
+dados1=melt(dados,id=c(1),c("total1","total2"))
+
+dados1$value[dados1$variable=="total2"]=dados1$value[dados1$variable=="total2"]*14
+ names(dados1)[2]="Legenda"
+ggplot(dados1, aes(x=Mes, y=value, group = Legenda)) +
+  geom_line(aes(linetype=Legenda,colour=Legenda), # Line type 
+            size = 1.5) +       # Thicker line
+  geom_point(aes(shape=Legenda),   
+             size = 4) +        # Large points
+  scale_shape_manual(values=c(18,19)) +                  # Change shapes
+  scale_linetype_manual(values=c(1, 4))+ # Change linetypes
+  scale_y_continuous(sec.axis = sec_axis(~./14, name = "Total de base2")) +
+  labs(y = "Total de base1", x = "Tempo (meses)")+
+  scale_color_manual(values = c("total1" = "#35978f", "total2" = "#f03f31")) +
+    theme(legend.position=c(0.1, 0.1))
+```
+
+
+
+
